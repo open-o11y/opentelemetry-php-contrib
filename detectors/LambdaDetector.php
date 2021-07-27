@@ -42,9 +42,9 @@ class LambdaDetector
         $functionVersion = getenv(self::LAMBDA_VERSION_ENV) ;
         $awsRegion = getenv(self::AWS_REGION_ENV);
         
-        // The following bitwise functions are created because
+        // The following ternary operations are created because
         // the attributes class will only NOT create a variable
-        // when it is set to null and getenv returns false when unsuccessful
+        // when it is set to null. getenv returns false when unsuccessful
         $lambdaName = $lambdaName ? $lambdaName : null;
         $functionVersion = $functionVersion ? $functionVersion : null;
         $awsRegion = $awsRegion ? $awsRegion : null;
