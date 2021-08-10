@@ -63,7 +63,7 @@ $span->setAttribute('item_A', 'cars')
 // in the service.
 
 // TODO: The next step for testing propagation would be to create two separate
-// web application, each making a request from a client front end. 
+// web application, each making a request from a client front end.
 AwsXrayPropagator::inject($span->getContext(), $carrier, $map);
 $service1 = new Service1($carrier);
 $childSpanContext = $service1->useService();

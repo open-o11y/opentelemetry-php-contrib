@@ -26,8 +26,8 @@ use OpenTelemetry\Contrib\OtlpGrpc\Exporter as OTLPExporter;
 use OpenTelemetry\Sdk\Trace\PropagationMap;
 use OpenTelemetry\Sdk\Trace\SpanProcessor\SimpleSpanProcessor;
 use OpenTelemetry\Sdk\Trace\TracerProvider;
-use Propagators\Aws\Xray\AwsXrayPropagator;
 use OpenTelemetry\Trace as API;
+use Propagators\Aws\Xray\AwsXrayPropagator;
 
 class Service1
 {
@@ -41,7 +41,8 @@ class Service1
         $this->carrier = $carrier;
     }
 
-    public function useService() {
+    public function useService()
+    {
         $Exporter = new OTLPExporter();
         $map = new PropagationMap();
         
@@ -65,7 +66,7 @@ class Service1
 
         // Set some dummy attributes
         $childSpan->setAttribute('service_2', 'microservice')
-                ->setAttribute('action_item', strval($i));
+                ->setAttribute('action_item', (string) $i);
 
         // End child span
         $childSpan->end();

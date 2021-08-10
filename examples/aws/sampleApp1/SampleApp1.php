@@ -29,11 +29,12 @@ use OpenTelemetry\Sdk\Trace\SpanProcessor\SimpleSpanProcessor;
 use OpenTelemetry\Sdk\Trace\TracerProvider;
 use OpenTelemetry\Trace as API;
 use Propagators\Aws\Xray\AwsXrayPropagator;
-// use Aws\S3\S3Client;  
+
+// use Aws\S3\S3Client;
 // use Aws\Exception\AwsException;
 
 /**
- * This is a sample app that makes an http request 
+ * This is a sample app that makes an http request
  * to aws.amazon.com or a call to AWS s3 buckets
  * It uses the OTEL GRPC Exporter
  * Sends traces to the aws-otel-collector
@@ -45,9 +46,9 @@ use Propagators\Aws\Xray\AwsXrayPropagator;
  * To use aws-sdk-call:
  * Comment line 110
  * Please downgrade guzzle from "^2.0@RC" to "^1.8.2" in composer.json
- * Then run composer require aws/aws-sdk-php 
+ * Then run composer require aws/aws-sdk-php
  * Run composer update to make sure everything is up to date
- * Uncomment lines 32-33, 111-134, 151-165 
+ * Uncomment lines 32-33, 111-134, 151-165
  */
 
 echo 'Starting Sample App' . PHP_EOL;
@@ -55,9 +56,9 @@ echo 'Starting Sample App' . PHP_EOL;
 // Prompts the user to choose which type of request to make
 echo 'Which call would you like to make? ' . PHP_EOL;
 echo 'Type outgoing-http-call or aws-sdk-call' . PHP_EOL;
-$handle = fopen ("php://stdin","r");
+$handle = fopen('php://stdin', 'r');
 $line = trim(fgets($handle));
-if($line !== 'outgoing-http-call' && $line !== 'aws-sdk-call') {
+if ($line !== 'outgoing-http-call' && $line !== 'aws-sdk-call') {
     echo "ABORTING!\n";
     exit;
 }
@@ -86,7 +87,6 @@ $span->setAttribute('item_A', 'cars')
 $carrier = [];
 $map = new PropagationMap();
 
-
 if ($line === 'outgoing-http-call') {
     // Create a child span for http call
     // Make an HTTP request to take some time up
@@ -106,7 +106,7 @@ if ($line === 'outgoing-http-call') {
     getTraceId($childSpan);
 
     $childSpan->end();
-} else if ($line === 'aws-sdk-call') {
+} else {
     echo 'The desired function is currently unavailable';
     // // Create a child span for sdk call
     // $childSpan = $tracer->startAndActivateSpan('session.generate.aws.sdk.span.' . microtime(true), API\SpanKind::KIND_CLIENT);
@@ -141,7 +141,7 @@ echo PHP_EOL . 'Sample App complete!';
 echo PHP_EOL;
 
 // Get a traceId from a span and prints it
-function getTraceId($span) 
+function getTraceId($span)
 {
     $traceId = $span->getContext()->getTraceId();
     $xrayTraceId = '1-' . substr($traceId, 0, 8) . '-' . substr($traceId, 8);
@@ -157,7 +157,7 @@ function getTraceId($span)
 //         ]);
 //         return 'The bucket\'s location is: ' .
 //             $result['Location'] . '. ' .
-//             'The bucket\'s effective URI is: ' . 
+//             'The bucket\'s effective URI is: ' .
 //             $result['@metadata']['effectiveUri'];
 //     } catch (AwsException $e) {
 //         return 'Error: ' . $e->getAwsErrorMessage();
