@@ -59,15 +59,15 @@ $span->setAttribute('item_A', 'cars')
 ->setAttribute('item_C', 'planes');
 
 // Inject the context of the child span into the carrier to pass to the first service1
-AwsXrayPropagator::inject($span->getContext(), $carrier, $map);
 // The tracer is passed to each service for convinience of not creating another tracer
 // in the service.
-$service1 = new Service1($tracer, $carrier);
+AwsXrayPropagator::inject($span->getContext(), $carrier, $map);
+$service1 = new Service1($carrier);
 $childSpanContext = $service1->useService();
 
 // Inject the context of the child span into the carrier to pass to the first service2
 AwsXrayPropagator::inject($childSpanContext, $carrier, $map);
-$service2 = new Service2($tracer, $carrier);
+$service2 = new Service2($carrier);
 $childSpanContext2 = $service2->useService();
 
 // Format and output the trace ID of the a child span

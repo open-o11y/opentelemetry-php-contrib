@@ -21,27 +21,38 @@ namespace Examples\Aws\SampleApp2;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
+use Instrumentation\Aws\Xray\AwsXrayIdGenerator;
+use OpenTelemetry\Contrib\OtlpGrpc\Exporter as OTLPExporter;
 use OpenTelemetry\Sdk\Trace\PropagationMap;
-use OpenTelemetry\Trace as API;
+use OpenTelemetry\Sdk\Trace\SpanProcessor\SimpleSpanProcessor;
+use OpenTelemetry\Sdk\Trace\TracerProvider;
 use Propagators\Aws\Xray\AwsXrayPropagator;
+use OpenTelemetry\Trace as API;
 
-class Service1 
+class Service1
 {
     private const LIMIT = 100;
 
     private $tracer;
     private $carrier;
 
-    public function __construct(API\Tracer $tracer, array $carrier)
+    public function __construct(array $carrier)
     {
-        $this->tracer = $tracer;
         $this->carrier = $carrier;
     }
 
     public function useService() {
-        // Extract the SpanContext from the carrier
+        $Exporter = new OTLPExporter();
         $map = new PropagationMap();
-        $context = AwsXrayPropagator::extract($this->carrier, $map);
+        
+        // Create a tracer object that uses the AWS X-Ray ID Generator to
+        // generate trace IDs in the correct format
+        $tracer = (new TracerProvider(null, null, new AwsXrayIdGenerator()))
+            ->addSpanProcessor(new SimpleSpanProcessor($Exporter))
+            ->getTracer('io.opentelemetry.contrib.php');
+        
+        // Extract the SpanContext from the carrier
+        $spanContext = AwsXrayPropagator::extract($this->carrier, $map);
 
         // Do some kind of operation
         $i = 0;
@@ -50,10 +61,10 @@ class Service1
         }
 
         // Create a child span
-        $childSpan = $this->tracer->startActiveSpan('session.child.span' . microtime(true), $context, false, API\SpanKind::KIND_CLIENT);
+        $childSpan = $tracer->startActiveSpan('session.second.child.span' . microtime(true), $spanContext, false, API\SpanKind::KIND_CLIENT);
 
         // Set some dummy attributes
-        $childSpan->setAttribute('service_1', 'microservice')
+        $childSpan->setAttribute('service_2', 'microservice')
                 ->setAttribute('action_item', strval($i));
 
         // End child span
