@@ -61,6 +61,9 @@ $span->setAttribute('item_A', 'cars')
 // Inject the context of the child span into the carrier to pass to the first service1
 // The tracer is passed to each service for convinience of not creating another tracer
 // in the service.
+
+// TODO: The next step for testing propagation would be to create two separate
+// web application, each making a request from a client front end. 
 AwsXrayPropagator::inject($span->getContext(), $carrier, $map);
 $service1 = new Service1($carrier);
 $childSpanContext = $service1->useService();
